@@ -8,6 +8,8 @@ public class OptionsMenu : MonoBehaviour
     public TMP_InputField minRequestDeadlineInput, maxRequestDeadlineInput;
     public TMP_InputField diskHeadSpeedInput;
     public TMP_InputField simulationSpeedInput;
+    public TMP_InputField diskSectorCountInput;
+    public TMP_InputField deadlineChanceInput;
 
     public TogglableButtonText applyButton;
 
@@ -30,7 +32,9 @@ public class OptionsMenu : MonoBehaviour
             { minRequestDeadlineInput, true },
             { maxRequestDeadlineInput, true },
             { diskHeadSpeedInput, true },
-            { simulationSpeedInput, true }
+            { simulationSpeedInput, true },
+            { diskSectorCountInput, true },
+            { deadlineChanceInput, true },
         };
 
         requestCountInput.onValueChanged.AddListener(s => OnRequestCountUpdate(s));
@@ -38,6 +42,8 @@ public class OptionsMenu : MonoBehaviour
         maxRequestDeadlineInput.onValueChanged.AddListener(s => OnMaxRequestDeadlineUpdate(s));
         diskHeadSpeedInput.onValueChanged.AddListener(s => OnDiskHeadSpeedUpdate(s));
         simulationSpeedInput.onValueChanged.AddListener(s => OnSimulationSpeedUpdate(s));
+        deadlineChanceInput.onValueChanged.AddListener(s => OnDeadlineChanceUpdate(s));
+        diskSectorCountInput.onValueChanged.AddListener(s => OnDiskSectorCountUpdate(s));
     }
 
     private void Start()
@@ -65,6 +71,8 @@ public class OptionsMenu : MonoBehaviour
         maxRequestDeadlineInput.text = currentSettings.maxDeadline.ToString();
         diskHeadSpeedInput.text = currentSettings.diskHeadSpeed.ToString();
         simulationSpeedInput.text = currentSettings.simulationSpeed.ToString();
+        diskSectorCountInput.text = currentSettings.diskSectorCount.ToString();
+        deadlineChanceInput.text = currentSettings.deadlineChance.ToString();
     }
 
     private void ApplySettings()
@@ -72,7 +80,9 @@ public class OptionsMenu : MonoBehaviour
         bool newSequence =
             currentSettings.requestCount != SimulationManager.Instance.simulationSettings.requestCount ||
             currentSettings.minDeadline != SimulationManager.Instance.simulationSettings.minDeadline ||
-            currentSettings.maxDeadline != SimulationManager.Instance.simulationSettings.maxDeadline;
+            currentSettings.maxDeadline != SimulationManager.Instance.simulationSettings.maxDeadline ||
+            currentSettings.deadlineChance != SimulationManager.Instance.simulationSettings.deadlineChance ||
+            currentSettings.diskSectorCount != SimulationManager.Instance.simulationSettings.diskSectorCount;
 
 
         SimulationManager.Instance.SetSimulationSettings(currentSettings);
@@ -209,6 +219,43 @@ public class OptionsMenu : MonoBehaviour
         else
         {
             MarkInvalid(simulationSpeedInput);
+        }
+    }
+
+    private void OnDiskSectorCountUpdate(string input)
+    {
+        if (int.TryParse(input, out int value))
+        {
+            if (value < 1)
+                MarkInvalid(diskSectorCountInput);
+            else
+            {
+                MarkNormal(diskSectorCountInput);
+                currentSettings.diskSectorCount = value;
+            }
+
+        }
+        else
+        {
+            MarkInvalid(diskSectorCountInput);
+        }
+    }
+
+    private void OnDeadlineChanceUpdate(string input)
+    {
+        if (float.TryParse(input, out float value))
+        {
+            if (value < 0 || value > 1)
+                MarkInvalid(deadlineChanceInput);
+            else
+            {
+                MarkNormal(deadlineChanceInput);
+                currentSettings.deadlineChance = value;
+            }
+        }
+        else
+        {
+            MarkInvalid(deadlineChanceInput);
         }
     }
 

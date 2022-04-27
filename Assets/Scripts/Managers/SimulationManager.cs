@@ -70,9 +70,6 @@ public class SimulationManager : MonoBehaviour
         SetDefaultSettings();
 
         CreateMarkerManagers();
-
-        RequestManager.Instance.diskSectorCount = simulationSettings.diskSectorCount;
-        RequestManager.Instance.UpdateDisk();
     }
 
     // Start is called before the first frame update
@@ -91,6 +88,12 @@ public class SimulationManager : MonoBehaviour
         SetSimulationDuration();
     }
 
+    private void UpdateRequestManager()
+    {
+        RequestManager.Instance.diskSectorCount = simulationSettings.diskSectorCount;
+        RequestManager.Instance.UpdateDisk();
+    }
+
     public void GenerateNewSequence()
     {
         currentSequence = RequestSequenceGenerator.GenerateSequence();
@@ -106,6 +109,7 @@ public class SimulationManager : MonoBehaviour
 
     public void RunSimulation()
     {
+        UpdateRequestManager();
         foreach (RequestMarkerManager manager in markerManagers.Values)
         {
             manager.ClearMarkers();
@@ -171,7 +175,8 @@ public class SimulationManager : MonoBehaviour
             maxDeadline = 10,
             diskHeadSpeed = 100,
             simulationSpeed = 1,
-            diskSectorCount = 200
+            diskSectorCount = 200,
+            deadlineChance = 0.1f
         };
     }
 

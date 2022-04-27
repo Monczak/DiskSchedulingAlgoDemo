@@ -4,8 +4,6 @@ using Random = UnityEngine.Random;
 
 public class RequestSequenceGenerator
 {
-    public static float deadlineChance = 0.1f;
-
     public static List<Request> GenerateSequence()
     {
         List<Request> requests = new List<Request>();
@@ -14,7 +12,7 @@ public class RequestSequenceGenerator
             requests.Add(new Request
             {
                 position = Random.Range(0, SimulationManager.Instance.simulationSettings.diskSectorCount),
-                hasDeadline = Random.value < deadlineChance,
+                hasDeadline = Random.value < SimulationManager.Instance.simulationSettings.deadlineChance,
                 deadlineDuration = Random.Range(SimulationManager.Instance.simulationSettings.minDeadline, SimulationManager.Instance.simulationSettings.maxDeadline)
             });
         }
