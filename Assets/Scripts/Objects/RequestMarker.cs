@@ -56,7 +56,7 @@ public class RequestMarker : MonoBehaviour
     private void UpdateProperties()
     {
         markerTransform.localScale = new Vector3(markerSize, 1, markerSize);
-        meshRenderer.material.color = markerColor;
+        meshRenderer.material.color = (hasDeadline && deadlinePercent == 0) ? new Color(markerColor.r * 0.5f, markerColor.g * 0.5f, markerColor.b * 0.5f, markerColor.a) : markerColor;
         deadlineRing.color = new Color(markerColor.r, markerColor.g, markerColor.b, 0.8f);
     }
 }

@@ -17,18 +17,31 @@ public class FDSCANAlgorithm : DiskSchedulingAlgorithm
         bool areThereDeadlines = false;
         foreach (Request request in requests)
         {
-            if (!requestMap.ContainsKey(request.position))
-                requestMap.Add(request.position, new Queue<Request>());
-            requestMap[request.position].Enqueue(request);
+            deadlineRequestsLeft += request.hasDeadline ? 1 : 0;
+            areThereDeadlines |= request.hasDeadline;
+        }
 
-            if (request.hasDeadline)
+        foreach (Request request in requests)
+        {
+            if (deadlineRequestsLeft > 0 && request.hasDeadline)
             {
-                areThereDeadlines = true;
-                deadlineRequestsLeft++;
+                if (!requestMap.ContainsKey(request.position))
+                    requestMap.Add(request.position, new Queue<Request>());
+                requestMap[request.position].Enqueue(request);
+                if (headPosition == -1)
+                    headPosition = request.position;
+            }           
+        }
+        foreach (Request request in requests)
+        {
+            if (!request.hasDeadline)
+            {
+                if (!requestMap.ContainsKey(request.position))
+                    requestMap.Add(request.position, new Queue<Request>());
+                requestMap[request.position].Enqueue(request);
+                if (headPosition == -1)
+                    headPosition = request.position;
             }
-
-            if (headPosition == -1 && request.hasDeadline)
-                headPosition = request.position;
         }
         if (!areThereDeadlines)
             headPosition = requests[0].position;
